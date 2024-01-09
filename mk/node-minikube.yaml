@@ -58,25 +58,25 @@ status:
     reason: CalicoIsUp
     status: "False"
     type: NetworkUnavailable
-  - lastHeartbeatTime: "2024-01-09T19:06:16Z"
+  - lastHeartbeatTime: "2024-01-09T19:11:23Z"
     lastTransitionTime: "2023-12-28T10:33:52Z"
     message: kubelet has sufficient memory available
     reason: KubeletHasSufficientMemory
     status: "False"
     type: MemoryPressure
-  - lastHeartbeatTime: "2024-01-09T19:06:16Z"
+  - lastHeartbeatTime: "2024-01-09T19:11:23Z"
     lastTransitionTime: "2023-12-28T10:33:52Z"
     message: kubelet has no disk pressure
     reason: KubeletHasNoDiskPressure
     status: "False"
     type: DiskPressure
-  - lastHeartbeatTime: "2024-01-09T19:06:16Z"
+  - lastHeartbeatTime: "2024-01-09T19:11:23Z"
     lastTransitionTime: "2023-12-28T10:33:52Z"
     message: kubelet has sufficient PID available
     reason: KubeletHasSufficientPID
     status: "False"
     type: PIDPressure
-  - lastHeartbeatTime: "2024-01-09T19:06:16Z"
+  - lastHeartbeatTime: "2024-01-09T19:11:23Z"
     lastTransitionTime: "2023-12-28T10:33:52Z"
     message: kubelet is posting ready status
     reason: KubeletReady
