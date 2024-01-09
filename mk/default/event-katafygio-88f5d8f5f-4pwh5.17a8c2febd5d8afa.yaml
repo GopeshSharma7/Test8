@@ -1,20 +1,8 @@
-apiVersion: events.k8s.io/v1
-deprecatedCount: 1
-deprecatedFirstTimestamp: "2024-01-09T19:00:58Z"
-deprecatedLastTimestamp: "2024-01-09T19:00:58Z"
-deprecatedSource:
-  component: kubelet
-  host: minikube
+apiVersion: v1
+count: 1
 eventTime: null
-kind: Event
-metadata:
-  creationTimestamp: "2024-01-09T19:00:58Z"
-  name: katafygio-88f5d8f5f-4pwh5.17a8c2febd5d8afa
-  namespace: default
-  uid: 59beb43b-2d45-4ec5-b832-b245aabeaaa4
-note: Created container katafygio
-reason: Created
-regarding:
+firstTimestamp: "2024-01-09T19:00:58Z"
+involvedObject:
   apiVersion: v1
   fieldPath: spec.containers{katafygio}
   kind: Pod
@@ -22,4 +10,18 @@ regarding:
   namespace: default
   resourceVersion: "1321268"
   uid: 277abf8b-b990-46fc-bd66-30e0c27d8eca
+kind: Event
+lastTimestamp: "2024-01-09T19:00:58Z"
+message: Created container katafygio
+metadata:
+  creationTimestamp: "2024-01-09T19:00:58Z"
+  name: katafygio-88f5d8f5f-4pwh5.17a8c2febd5d8afa
+  namespace: default
+  uid: 59beb43b-2d45-4ec5-b832-b245aabeaaa4
+reason: Created
+reportingComponent: ""
+reportingInstance: ""
+source:
+  component: kubelet
+  host: minikube
 type: Normal

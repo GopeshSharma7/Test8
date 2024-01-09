@@ -1,0 +1,149 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9402"
+    prometheus.io/scrape: "true"
+  creationTimestamp: "2024-01-02T05:31:34Z"
+  generateName: cert-manager-7476c8fcf4-
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v1.12.0
+    pod-template-hash: 7476c8fcf4
+  name: cert-manager-7476c8fcf4-fzmh5
+  namespace: cert-manager
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: cert-manager-7476c8fcf4
+    uid: d6a753f3-875e-4009-8c94-07593e2ea67b
+  uid: 8f6e0df1-1bad-4c54-9494-7ac25a20a5b6
+spec:
+  containers:
+  - args:
+    - --v=2
+    - --cluster-resource-namespace=$(POD_NAMESPACE)
+    - --leader-election-namespace=kube-system
+    - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.12.0
+    - --max-concurrent-challenges=60
+    env:
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    image: quay.io/jetstack/cert-manager-controller:v1.12.0
+    imagePullPolicy: IfNotPresent
+    name: cert-manager-controller
+    ports:
+    - containerPort: 9402
+      name: http-metrics
+      protocol: TCP
+    - containerPort: 9403
+      name: http-healthz
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-6p8l2
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: minikube
+  nodeSelector:
+    kubernetes.io/os: linux
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  serviceAccount: cert-manager
+  serviceAccountName: cert-manager
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-6p8l2
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-02T05:31:34Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-08T10:10:50Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-08T10:10:50Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-02T05:31:34Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://6f9b01d55c837006b8bcefec2da1d13efb9d38962e03cb9c0a7a6780d4ae511d
+    image: quay.io/jetstack/cert-manager-controller:v1.12.0
+    imageID: docker-pullable://quay.io/jetstack/cert-manager-controller@sha256:4a9d0264055b4e7e791def9702e74eb76c2ff022ba185218395ec6ae22118df7
+    lastState:
+      terminated:
+        containerID: docker://66f1642e6100c9690dc5b72152ddfdff7f8f17ac2dd0742bdc5d084e2d47868e
+        exitCode: 137
+        finishedAt: "2024-01-08T10:10:43Z"
+        reason: Error
+        startedAt: "2024-01-05T07:57:01Z"
+    name: cert-manager-controller
+    ready: true
+    restartCount: 4
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-08T10:10:48Z"
+  hostIP: 192.168.49.2
+  phase: Running
+  podIP: 10.244.0.168
+  podIPs:
+  - ip: 10.244.0.168
+  qosClass: BestEffort
+  startTime: "2024-01-02T05:31:34Z"

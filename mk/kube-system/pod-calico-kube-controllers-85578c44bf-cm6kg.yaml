@@ -1,0 +1,145 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2023-12-27T18:10:45Z"
+  generateName: calico-kube-controllers-85578c44bf-
+  labels:
+    k8s-app: calico-kube-controllers
+    pod-template-hash: 85578c44bf
+  name: calico-kube-controllers-85578c44bf-cm6kg
+  namespace: kube-system
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: calico-kube-controllers-85578c44bf
+    uid: 203efdf9-cd2e-43e2-8d5b-6f517bd023a0
+  uid: 0f1654c2-63ea-4a9b-8947-f6e947666153
+spec:
+  containers:
+  - env:
+    - name: ENABLED_CONTROLLERS
+      value: node
+    - name: DATASTORE_TYPE
+      value: kubernetes
+    image: docker.io/calico/kube-controllers:v3.26.1
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      exec:
+        command:
+        - /usr/bin/check-status
+        - -l
+      failureThreshold: 6
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+    name: calico-kube-controllers
+    readinessProbe:
+      exec:
+        command:
+        - /usr/bin/check-status
+        - -r
+      failureThreshold: 3
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-krxxj
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: minikube
+  nodeSelector:
+    kubernetes.io/os: linux
+  preemptionPolicy: PreemptLowerPriority
+  priority: 2000000000
+  priorityClassName: system-cluster-critical
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: calico-kube-controllers
+  serviceAccountName: calico-kube-controllers
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-krxxj
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T18:10:45Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-08T10:10:59Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-08T10:10:59Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T18:10:45Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://ae1089f02a0e8ccae423990a5c26614db55e395de44a43bcc8ad434e0aad728e
+    image: calico/kube-controllers:v3.26.1
+    imageID: docker-pullable://calico/kube-controllers@sha256:01ce29ea8f2b34b6cef904f526baed98db4c0581102f194e36f2cd97943f77aa
+    lastState:
+      terminated:
+        containerID: docker://da3c7dfa7b83ff5cc71efb11c22b10a374f1f6f9a6689c4ecd3877953a1e4d09
+        exitCode: 2
+        finishedAt: "2024-01-08T10:10:33Z"
+        reason: Error
+        startedAt: "2024-01-05T07:57:01Z"
+    name: calico-kube-controllers
+    ready: true
+    restartCount: 6
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-08T10:10:48Z"
+  hostIP: 192.168.49.2
+  phase: Running
+  podIP: 10.244.0.165
+  podIPs:
+  - ip: 10.244.0.165
+  qosClass: BestEffort
+  startTime: "2023-12-27T18:10:45Z"
