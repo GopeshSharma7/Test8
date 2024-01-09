@@ -10,4 +10,4 @@ spec:
   holderIdentity: cert-manager-cainjector-bdd866bd4-wmj9t_2a7b8bb2-f414-48d0-a7c9-6dc96f9efe2f
   leaseDurationSeconds: 60
   leaseTransitions: 4
-  renewTime: "2024-01-09T19:14:16.383819Z"
+  renewTime: "2024-01-09T19:14:31.411606Z"
