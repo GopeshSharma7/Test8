@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  crpd-config-input: "\ninterface_groups:\n  fabricInterface: \n  \n  \n  - enp3s0
+    \n  \n  fabricWorkloadInterface: \n  \n  - \"\"\n  \n  noLocalSwitching:\n  \n
+    \ - \"\"\n  \nrouting_instances:\n  - vswitch:\n      instance-type: virtual-switch"
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: config-inputs
+  namespace: jcnr

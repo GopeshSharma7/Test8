@@ -1,0 +1,25 @@
+apiVersion: v1
+count: 16032
+eventTime: null
+firstTimestamp: "2023-12-27T09:42:49Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: etcd-sharmag-k8s-master-pnad30.englab.juniper.net
+  namespace: kube-system
+  uid: 909c78e7f87de5a207e84855c749fc7c
+kind: Event
+lastTimestamp: "2024-01-10T09:23:50Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:42:49Z"
+  name: etcd-sharmag-k8s-master-pnad30.englab.juniper.net.17a4a6fe32cdbf21
+  namespace: kube-system
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-master-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-master-pnad30.englab.juniper.net
+type: Warning

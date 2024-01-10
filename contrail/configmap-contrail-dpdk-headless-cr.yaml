@@ -1,0 +1,140 @@
+apiVersion: v1
+data:
+  contrail-dpdk-headless-cr.yaml: "apiVersion: dataplane.juniper.net/v1\nkind: Vrouter\nmetadata:\n
+    \ name: contrail-vrouter-masters\n  namespace: contrail\nspec:\n  agent:\n    default:\n
+    \     xmppAuthEnable: false\n      fabricRpfCheckDisable: true\n  \n    \n      logLevel:
+    SYS_INFO\n    \n    \n  \n    sandesh:\n      introspectSslEnable: false\n      sandeshSslEnable:
+    false\n  agentModeType: dpdk\n  \n  common:\n    affinity:\n      nodeAffinity:\n
+    \       requiredDuringSchedulingIgnoredDuringExecution:\n          nodeSelectorTerms:\n
+    \         - matchExpressions:\n            - key: node-role.kubernetes.io/control-plane\n
+    \             operator: Exists\n    containers:\n    - name: \"contrail-vrouter-agent\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-agent:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      livenessProbe:\n        httpGet:\n
+    \         host: 127.0.0.1\n          path: /vrouter-health-check\n          port:
+    9091\n        initialDelaySeconds: 10\n        periodSeconds: 20\n        timeoutSeconds:
+    5\n        failureThreshold: 3\n        successThreshold: 1\n      startupProbe:\n
+    \       httpGet:\n          host: 127.0.0.1\n          path: /vrouter-health-check\n
+    \         port: 9091\n        initialDelaySeconds: 10\n        periodSeconds:
+    20\n        timeoutSeconds: 5\n        failureThreshold: 3\n        successThreshold:
+    1\n      \n    - name: contrail-vrouter-agent-dpdk\n      \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-dpdk:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n      resources:           {\n
+    \       \"limits\": {\n          \"hugepages-1Gi\": \"6Gi\",\n          \"memory\":
+    \"6Gi\"\n        },\n        \"requests\": {\n          \"hugepages-1Gi\": \"6Gi\",\n
+    \         \"memory\": \"6Gi\"\n        }\n      }\n      \n    - name: contrail-vrouter-telemetry-exporter\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-telemetry-exporter:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n      env:\n      - name:
+    TELEMETRY_EXPORTER_SCHEME\n        value: http\n      - name: INTROSPECT_SCHEME\n
+    \       value: http\n    initContainers:\n    - name: \"jcnr-evpn-conf\"\n      \n
+    \     image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpdconfig-generator:v21
+    \n      \n      env:\n      - name: PYTHONUNBUFFERED\n        value: \"1\"\n      securityContext:\n
+    \       capabilities:\n          add:\n          - SYS_MODULE\n          - NET_ADMIN\n
+    \         - SYS_PTRACE\n        privileged: true\n        runAsUser: 0\n      volumeMounts:\n
+    \     - mountPath: /etc/podinfo\n        name: podinfo\n      - mountPath: /var/lib/contrail\n
+    \       name: var-lib-contrail\n      - mountPath: /var/run\n        name: var-run\n
+    \     - mountPath: /var/run/contrail\n        name: var-run-contrail\n      -
+    mountPath: /etc/contrail\n        name: config-volume\n      - mountPath: /var/crash\n
+    \       name: var-crashes\n      - mountPath: /var/log/contrail\n        name:
+    var-log-contrail\n      - mountPath: /lib/modules\n        name: lib-modules\n
+    \     command: [\"/bin/sh\", \"-c\"]\n      env:\n      - name: NODE_NAME\n        valueFrom:\n
+    \         fieldRef:\n            fieldPath: spec.nodeName\n      - name: PYTHONUNBUFFERED\n
+    \       value: \"1\"\n      args:\n        - sysctl -w net.ipv6.conf.default.addr_gen_mode=0
+    && sysctl -w net.ipv6.conf.all.addr_gen_mode=0 && sysctl -w net.ipv6.conf.default.autoconf=0
+    && sysctl -w net.ipv6.conf.all.autoconf=0 && echo -e \"\\nSuccessfully loaded
+    kernel parameter using sysctl cli\\n\" || echo -e \"\\nError in loading kernel
+    parameter using sysctl cli\\n\";\n          modprobe tun && modprobe ipip && modprobe
+    ip_tunnel && modprobe ip6_tunnel && modprobe mpls_gso && modprobe mpls_router
+    && modprobe mpls_iptunnel && modprobe vrf && modprobe vxlan && modprobe fou &&
+    modprobe fou6 && echo -e \"\\nSuccessfully loaded kernel modules\\n\" || echo
+    -e \"Error in loadinfg kernel modules. Check whether kernel modules packages are
+    installed or not.\\nIf running OS is Ubuntu, Run following command and reboot
+    \ to enable kernel modules.\\nsudo apt install linux-generic -y \\n sudo apt install
+    --reinstall linux-image-$(uname -r) -y; \\n sudo apt install --reinstall linux-modules-$(uname
+    -r) -y;\\n sudo apt install --reinstall linux-modules-extra-$(uname -r) -y; \\n\"
+    ;\n          set -o pipefail && python3 -u crpdconfig_generator/crpdconfig_generator.py
+    evpn | tee -a \"/var/log/contrail/cleanup.log\";\n    - name: \"contrail-init\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-init:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n    - name: \"contrail-vrouter-kernel-init-dpdk\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-kernel-init-dpdk:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n  dpdk:\n    \n    dpdkCtrlThreadMask:
+    \"\"\n    serviceCoreMask: \"\"\n    cpuCoreMask: \"2,3\"\n    \n    dpdkUioDriver:
+    \"vfio-pci\"\n    hugePages: \n    hugePagesDir: \"/dev/hugepages\"\n    mtu:
+    9000\n    dpdkCommandAdditionalArgs: \"--yield_option 0\"\n    l2TableAgeout:
+    60\n    l2TableSize: \"10240\"\n  headlessMode: true\n  installCni: false\n  interfaces:\n
+    \       - name: enp3s0\n          level: \"l3\"\n          type: \"fabric\"\n
+    \         ddp: \"auto\"\n  \n  logPath: \"/var/log/jcnr/\"\n  corePattern: \"\"\n
+    \ coreFilePath: /var/crash\n  \n  stormControlProfiles:\n    {\"rate_limit_pf1\":{\"bandwidth\":{\"level\":0}}}\n
+    \ qosEnable: false\n  interfaceLayer: \"l3\"\n  restoreInterfaces: false\n---\napiVersion:
+    dataplane.juniper.net/v1\nkind: Vrouter\nmetadata:\n  name: contrail-vrouter-nodes\n
+    \ namespace: contrail\nspec:\n  agent:\n    default:\n      xmppAuthEnable: false\n
+    \     fabricRpfCheckDisable: true\n  \n    \n      logLevel: SYS_INFO\n    \n
+    \   \n  \n    sandesh:\n      introspectSslEnable: false\n      sandeshSslEnable:
+    false\n  agentModeType: dpdk\n  \n  common:\n    affinity:\n      nodeAffinity:\n
+    \       requiredDuringSchedulingIgnoredDuringExecution:\n          nodeSelectorTerms:\n
+    \         - matchExpressions:\n            - key: node-role.kubernetes.io/control-plane\n
+    \             operator: DoesNotExist\n    containers:\n    - name: \"contrail-vrouter-agent\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-agent:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      livenessProbe:\n        httpGet:\n
+    \         host: 127.0.0.1\n          path: /vrouter-health-check\n          port:
+    9091\n        initialDelaySeconds: 10\n        periodSeconds: 20\n        timeoutSeconds:
+    5\n        failureThreshold: 3\n        successThreshold: 1\n      startupProbe:\n
+    \       httpGet:\n          host: 127.0.0.1\n          path: /vrouter-health-check\n
+    \         port: 9091\n        initialDelaySeconds: 10\n        periodSeconds:
+    20\n        timeoutSeconds: 5\n        failureThreshold: 3\n        successThreshold:
+    1\n      \n    - name: contrail-vrouter-agent-dpdk\n      \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-dpdk:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n      resources:           {\n
+    \       \"limits\": {\n          \"hugepages-1Gi\": \"6Gi\",\n          \"memory\":
+    \"6Gi\"\n        },\n        \"requests\": {\n          \"hugepages-1Gi\": \"6Gi\",\n
+    \         \"memory\": \"6Gi\"\n        }\n      }\n      \n    - name: contrail-vrouter-telemetry-exporter\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-telemetry-exporter:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n      env:\n      - name:
+    TELEMETRY_EXPORTER_SCHEME\n        value: http\n      - name: INTROSPECT_SCHEME\n
+    \       value: http\n    initContainers:\n    - name: \"jcnr-evpn-conf\"\n      \n
+    \     image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpdconfig-generator:v21
+    \n      \n      env:\n      - name: PYTHONUNBUFFERED\n        value: \"1\"\n      securityContext:\n
+    \       capabilities:\n          add:\n          - SYS_MODULE\n          - NET_ADMIN\n
+    \         - SYS_PTRACE\n        privileged: true\n        runAsUser: 0\n      volumeMounts:\n
+    \     - mountPath: /etc/podinfo\n        name: podinfo\n      - mountPath: /var/lib/contrail\n
+    \       name: var-lib-contrail\n      - mountPath: /var/run\n        name: var-run\n
+    \     - mountPath: /var/run/contrail\n        name: var-run-contrail\n      -
+    mountPath: /etc/contrail\n        name: config-volume\n      - mountPath: /var/crash\n
+    \       name: var-crashes\n      - mountPath: /var/log/contrail\n        name:
+    var-log-contrail\n      - mountPath: /lib/modules\n        name: lib-modules\n
+    \     command: [\"/bin/sh\",\"-c\"]\n      env:\n      - name: NODE_NAME\n        valueFrom:\n
+    \         fieldRef:\n            fieldPath: spec.nodeName\n      - name: PYTHONUNBUFFERED\n
+    \       value: \"1\"\n      args:\n        - sysctl -w net.ipv6.conf.default.addr_gen_mode=0
+    && sysctl -w net.ipv6.conf.all.addr_gen_mode=0 && sysctl -w net.ipv6.conf.default.autoconf=0
+    && sysctl -w net.ipv6.conf.all.autoconf=0 && echo -e \"\\nSuccessfully loaded
+    kernel parameter using sysctl cli\\n\" || echo -e \"\\nError in loading kernel
+    parameter using sysctl cli\\n\";\n          modprobe tun && modprobe ipip && modprobe
+    ip_tunnel && modprobe ip6_tunnel && modprobe mpls_gso && modprobe mpls_router
+    && modprobe mpls_iptunnel && modprobe vrf && modprobe vxlan && modprobe fou &&
+    modprobe fou6 && echo -e \"\\nSuccessfully loaded kernel modules\\n\"|| echo -e
+    \"\\nError in loadinfg kernel modules. Check whether kernel modules packages are
+    installed or not.\\nIf running OS is Ubuntu, Run following command and reboot
+    \ to enable kernel modules.\\nsudo apt install linux-generic -y \\n sudo apt install
+    --reinstall linux-image-$(uname -r) -y; \\n sudo apt install --reinstall linux-modules-$(uname
+    -r) -y;\\n sudo apt install --reinstall linux-modules-extra-$(uname -r) -y; \\n\"
+    ;\n          set -o pipefail && python3 -u crpdconfig_generator/crpdconfig_generator.py
+    evpn | tee -a \"/var/log/contrail/cleanup.log\" ;           \n    - name: \"contrail-init\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-init:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n    - name: \"contrail-vrouter-kernel-init-dpdk\"\n
+    \     \n      image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-vrouter-kernel-init-dpdk:master\n
+    \     \n      imagePullPolicy: IfNotPresent\n      \n  dpdk:\n    \n    dpdkCtrlThreadMask:
+    \"\"\n    serviceCoreMask: \"\"\n    cpuCoreMask: \"2,3\"\n    \n    dpdkUioDriver:
+    \"vfio-pci\"\n    hugePages: \n    hugePagesDir: \"/dev/hugepages\"\n    mtu:
+    9000\n    dpdkCommandAdditionalArgs: \"--yield_option 0\"\n    l2TableAgeout:
+    60\n    l2TableSize: \"10240\"\n  headlessMode: true\n  installCni: false\n  interfaces:\n
+    \       - name: enp3s0\n          level: \"l3\"\n          type: \"fabric\"\n
+    \         ddp: \"auto\"\n  \n  logPath: \"/var/log/jcnr/\"\n  corePattern: \"\"\n
+    \ coreFilePath: /var/crash\n  \n  stormControlProfiles:\n    {\"rate_limit_pf1\":{\"bandwidth\":{\"level\":0}}}\n
+    \ qosEnable: false\n  interfaceLayer: \"l3\"\n  restoreInterfaces: false\n"
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: contrail-dpdk-headless-cr
+  namespace: contrail

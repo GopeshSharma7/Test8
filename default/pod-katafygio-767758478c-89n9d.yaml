@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: d2882cba3568888772bed3442086fbdda177630d9b40343e62d4f64587e6214a
+    cni.projectcalico.org/podIP: 10.244.100.203/32
+    cni.projectcalico.org/podIPs: 10.244.100.203/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.100.203"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.100.203"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+  creationTimestamp: "2024-01-10T07:14:14Z"
+  generateName: katafygio-767758478c-
+  labels:
+    app: katafygio
+    chart: katafygio-0.5.1
+    heritage: Helm
+    pod-template-hash: 767758478c
+    release: katafygio
+  name: katafygio-767758478c-89n9d
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: katafygio-767758478c
+    uid: d8a8e448-4477-4437-8ee3-ddfc94f78247
+spec:
+  containers:
+  - args:
+    - --local-dir=/var/lib/katafygio/data
+    - --healthcheck-port=8080
+    - --log-level=info
+    - --log-output=stdout
+    - --resync-interval=300
+    - --exclude-kind=replicasets
+    - --exclude-kind=endpoints
+    - --exclude-kind=events
+    command:
+    - sleep
+    - infinity
+    image: svl-artifactory.juniper.net/atom-docker/cn2/sharmag07/katafygio:h2
+    imagePullPolicy: Always
+    name: katafygio
+    ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/lib/katafygio/data
+      name: katafygio-data
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-dhjkq
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: sharmag-k8s-master-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 65534
+  serviceAccount: katafygio
+  serviceAccountName: katafygio
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: katafygio-data
+    persistentVolumeClaim:
+      claimName: katafygio
+  - name: kube-api-access-dhjkq
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace

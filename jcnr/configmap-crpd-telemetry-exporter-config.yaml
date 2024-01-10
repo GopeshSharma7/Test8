@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  config-crpd.yaml: |-
+    log_level: info
+    api_listener:
+      port: 8072
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: crpd-telemetry-exporter-config
+  namespace: jcnr

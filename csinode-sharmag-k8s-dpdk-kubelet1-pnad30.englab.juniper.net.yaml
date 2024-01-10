@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: CSINode
+metadata:
+  annotations:
+    storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/azure-file,kubernetes.io/cinder,kubernetes.io/gce-pd,kubernetes.io/vsphere-volume
+  creationTimestamp: "2023-12-27T09:45:54Z"
+  name: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  ownerReferences:
+  - apiVersion: v1
+    kind: Node
+    name: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+    uid: 0d63efef-cb8a-48ef-9f1f-a2e3c863528b
+spec:
+  drivers: null

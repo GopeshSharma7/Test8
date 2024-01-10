@@ -1,0 +1,26 @@
+apiVersion: v1
+count: 16013
+eventTime: null
+firstTimestamp: "2023-12-27T09:47:47Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: contrail-k8s-deployer-67c445564f-8k7kk
+  namespace: contrail-deploy
+  resourceVersion: "1255"
+  uid: 535131bc-6134-4efc-b92a-d29cd8fcf540
+kind: Event
+lastTimestamp: "2024-01-10T09:23:10Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:47:47Z"
+  name: contrail-k8s-deployer-67c445564f-8k7kk.17a4a7437e6c7aea
+  namespace: contrail-deploy
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+type: Warning

@@ -1,0 +1,12 @@
+apiVersion: crd.projectcalico.org/v1
+kind: FelixConfiguration
+metadata:
+  annotations:
+    projectcalico.org/metadata: '{"uid":"6933e751-5038-45c2-9c43-871f16765dd2","creationTimestamp":"2023-12-27T09:46:29Z"}'
+  creationTimestamp: "2023-12-27T09:46:29Z"
+  name: default
+spec:
+  bpfLogLevel: ""
+  floatingIPs: Disabled
+  logSeverityScreen: Info
+  reportingInterval: 0s

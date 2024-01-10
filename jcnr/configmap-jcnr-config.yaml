@@ -1,0 +1,45 @@
+apiVersion: v1
+data:
+  crpd-config.tmpl: "groups {\n    base {\n        apply-flags omit;\n        apply-macro
+    ht {\n            jcnr;\n        }\n        system {\n            root-authentication
+    {\n                    encrypted-password \"{{.EncryptedPassword}}\"; ## SECRET-DATA\n
+    \           }\n        commit {\n            xpath;\n            constraints {\n
+    \               direct-access;\n            }\n            notification {\n                configuration-diff-format
+    xml;\n            }\n        }\n        scripts {\n            language python3;\n
+    \           action {\n                max-datasize 256m;\n            }\n        }\n
+    \           {{if .LicenseKey}}\n            license {\n                keys {\n
+    \                       key \"{{.LicenseKey}}\";\n                }\n            }\n
+    \           {{end}}\n            services {\n                ssh {\n                root-login
+    allow;\n                port 24;\n                }\n                extension-service
+    {\n                    request-response {\n                        grpc {\n                            clear-text
+    {\n                                address 127.0.0.1;\n                                {{if
+    .Env.JCNR_JET_API_PORT}}\n                                port {{.Env.JCNR_JET_API_PORT}};\n
+    \                               {{else}}\n                                port
+    50051;\n                                {{end}}\n                            }\n
+    \                           skip-authentication;\n                        }\n
+    \                   }\n                }\n                netconf {\n                ssh;\n
+    \               }\n            }\n            syslog {\n                host 127.0.0.1
+    {\n                    any any;\n                    kernel none;\n                    interactive-commands
+    notice;\n                    port 50055;\n                    transport udp;\n
+    \                   match-strings [ license-check jcnr-init cli _LOG ];\n                    structured-data;\n
+    \               }\n                source-address 127.0.0.1;\n            }\n
+    \       }\n        routing-options {\n            forwarding-table {\n                channel
+    vrouter {\n                    protocol {\n                        protocol-type
+    gRPC;             \n                        {{if .Env.VROUTER_GRPC_PORT}}\n                        destination
+    127.0.0.1:{{.Env.VROUTER_GRPC_PORT}};\n                        {{else}}\n                        destination
+    127.0.0.1:50052;\n                        {{end}}\n                    }\n                }\n
+    \           }\n            resolution {\n                rib :gribi.inet6.0 {\n
+    \                   inet6-resolution-ribs :gribi.inet6.0;\n                }\n
+    \           }                \n        }\n        interfaces {\n            irb
+    {\n                unit 0 {\n                    mac {{.NodeInternal.routerMac}};\n
+    \               }\n            }\n        }\n    }\n}"
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: jcnr-config
+  namespace: jcnr

@@ -1,0 +1,26 @@
+apiVersion: v1
+count: 15998
+eventTime: null
+firstTimestamp: "2023-12-27T09:48:02Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: syslog-ng-bmv48
+  namespace: jcnr
+  resourceVersion: "1254"
+  uid: 1f6b1b6f-5dec-4794-865b-90d781091e47
+kind: Event
+lastTimestamp: "2024-01-10T09:22:51Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:48:02Z"
+  name: syslog-ng-bmv48.17a4a747207bc7c7
+  namespace: jcnr
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+type: Warning

@@ -1,0 +1,25 @@
+apiVersion: crd.projectcalico.org/v1
+kind: KubeControllersConfiguration
+metadata:
+  annotations:
+    projectcalico.org/metadata: '{"uid":"713484d9-6746-4724-b35c-594a92172474","creationTimestamp":"2023-12-27T09:46:46Z"}'
+  creationTimestamp: "2023-12-27T09:46:46Z"
+  name: default
+spec:
+  controllers:
+    namespace:
+      reconcilerPeriod: 5m0s
+    node:
+      leakGracePeriod: 15m0s
+      reconcilerPeriod: 5m0s
+      syncLabels: Enabled
+    policy:
+      reconcilerPeriod: 5m0s
+    serviceAccount:
+      reconcilerPeriod: 5m0s
+    workloadEndpoint:
+      reconcilerPeriod: 5m0s
+  etcdV3CompactionPeriod: 10m0s
+  healthChecks: Enabled
+  logSeverityScreen: Info
+  prometheusMetricsPort: 9094

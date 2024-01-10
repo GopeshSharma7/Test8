@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  127.0.0.1: "5269"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-12-27T09:47:54Z"
+  name: dynamic-config-configmap
+  namespace: contrail

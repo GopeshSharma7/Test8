@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+  AGENT_MODE: dpdk
+  CPU_CORE_MASK: 2,3
+  DPDK_COMMAND_ADDITIONAL_ARGS: --yield_option 0
+  DPDK_CTRL_THREAD_MASK: ""
+  DPDK_UIO_DRIVER: vfio-pci
+  HUGE_PAGES: ""
+  HUGE_PAGES_DIR: /dev/hugepages
+  INTERFACE_LAYER: l3
+  PHYSICAL_INTERFACE: ""
+  SERVICE_CORE_MASK: ""
+  SMARTNIC_AGING_LCORE_ENABLED: ""
+  SMARTNIC_CUSTOM_VF0_NAME: ""
+  SMARTNIC_DROP_OFFLOAD_ENABLED: ""
+  SMARTNIC_INSERT_MODE: ""
+  SMARTNIC_INTERFACE_CONF: ""
+  SMARTNIC_PF0_DRIVER: ""
+  SMARTNIC_VDPA_ENABLED: ""
+  SMARTNIC_VDPA_MAPPING_ENABLED: ""
+  SMARTNIC_VFs_NUM: ""
+  SMARTNIC_VFs_QUEUE_NUM: ""
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-12-27T09:47:54Z"
+  name: contrail-vrouter-nodes-env-configmap
+  namespace: contrail

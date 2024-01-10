@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "1"
+    deployment.kubernetes.io/max-replicas: "1"
+    deployment.kubernetes.io/revision: "1"
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app: contrail-k8s-deployer
+    pod-template-hash: 67c445564f
+  name: contrail-k8s-deployer-67c445564f
+  namespace: contrail-deploy
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: contrail-k8s-deployer
+    uid: 9bf8c5e1-be50-41c6-b2dd-2cc68bfc500a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contrail-k8s-deployer
+      pod-template-hash: 67c445564f
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: contrail-k8s-deployer
+        pod-template-hash: 67c445564f
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      containers:
+      - command:
+        - sh
+        - -c
+        - /manager --metrics-addr 127.0.0.1:8081 --headless-mode true
+        image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-deployer:master
+        imagePullPolicy: IfNotPresent
+        name: contrail-k8s-deployer
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: host-time
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      initContainers:
+      - command:
+        - kubectl
+        - apply
+        - --server-side=true
+        - --force-conflicts
+        - -k
+        - /distributed-crd
+        image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-distributed-crdloader:master
+        imagePullPolicy: IfNotPresent
+        name: contrail-k8s-crdloader
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: host-time
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: contrail-deploy-serviceaccount
+      serviceAccountName: contrail-deploy-serviceaccount
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /etc/localtime
+          type: ""
+        name: host-time
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert

@@ -1,0 +1,28 @@
+action: Scheduling
+apiVersion: v1
+eventTime: "2024-01-06T07:02:51.241758Z"
+firstTimestamp: null
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: kube-crpd-worker-sts-1
+  namespace: jcnr
+  resourceVersion: "1297"
+  uid: 4216f573-b38f-4abd-a9cd-15a87fa73576
+kind: Event
+lastTimestamp: null
+message: '0/2 nodes are available: 2 node(s) didn''t have free ports for the requested
+  pod ports. preemption: 0/2 nodes are available: 2 No preemption victims found for
+  incoming pod..'
+metadata:
+  creationTimestamp: "2024-01-06T07:02:51Z"
+  name: kube-crpd-worker-sts-1.17a7b0110bca56b4
+  namespace: jcnr
+reason: FailedScheduling
+reportingComponent: default-scheduler
+reportingInstance: default-scheduler-sharmag-k8s-master-pnad30.englab.juniper.net
+series:
+  count: 1180
+  lastObservedTime: "2024-01-10T08:58:29.390450Z"
+source: {}
+type: Warning

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: "2023-12-27T09:47:45Z"
+  labels:
+    kubernetes.io/metadata.name: jcnr
+  name: jcnr
+spec:
+  finalizers:
+  - kubernetes

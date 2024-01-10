@@ -1,0 +1,26 @@
+apiVersion: v1
+count: 16018
+eventTime: null
+firstTimestamp: "2023-12-27T09:47:05Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: kube-multus-ds-bxz6m
+  namespace: kube-system
+  resourceVersion: "1075"
+  uid: f0b550d8-53ff-487c-ab12-30d018e7020c
+kind: Event
+lastTimestamp: "2024-01-10T09:23:13Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:47:05Z"
+  name: kube-multus-ds-bxz6m.17a4a739beb2cfb7
+  namespace: kube-system
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-master-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-master-pnad30.englab.juniper.net
+type: Warning

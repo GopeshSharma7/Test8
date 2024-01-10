@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIDBTCCAe2gAwIBAgIIauJO/B9KjJcwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+    AxMKa3ViZXJuZXRlczAeFw0yMzEyMjcwOTM3NDBaFw0zMzEyMjQwOTQyNDBaMBUx
+    EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+    AoIBAQDkrl7PIftmzif17mSJeUFuIdxm/uzk9+07zwCYYRv/xyJjfWSyTOggaV4b
+    OyOiUFfjxOo75fKTMRU8vKtQXCSYRxbvEx4lj03WbCnYpgxey2eFqt8j9XzF0Fzw
+    dIlekbR/hRzaEyZh5vwdKuLhUsOpR0eqIir4tQcnhLswPtbo+5qkTZE8Tx2b5xl4
+    gAY07T7vpJudwYShpPvborjX1oxwdmdx5tpQUdcCASJWutkYCHJOaXzyD5adqwK9
+    uGp+zYljqE+ji4HeLjc2YoZn7eZj3AxbEuVAcGbRjTZyWzqvsQHq5JZ4isuQu6rb
+    +kaqeVeCrTepNllHuopkGTJ5fCVvAgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
+    BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQpHCfBNHNZORUMxITwaSFZvov6SjAV
+    BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQAz3ouWLuqS
+    tXG59jQAdAj7ZtlN9bJ7WfWYkFzeJaa1NooCSvsoINPYT93tXbq90iQafKZVp2HX
+    8M2/vUPZJTCpXBmpbGCTjuTctsb/+LNYeo9Pi8ZWT6W7fR4j9thwCABftlccJGqA
+    mJI8nsz4grwas3f7+pNuah7HEEDTeGbI/rgktTZz5/t7y0MnaV1o9WmAcfkoC1jr
+    h6OPi1rUzGrviD8jHO3sqkV4gUv0v80qpHU4zQVSR2aF2MXk/vloV0tTZcgO+P6A
+    WJ3Mj39je4uJmn6LwcDQuKdYDlGFllTrcH4PM7/q8DCovzS9xXw3RL7TGpxTrnPs
+    kNaVn+2MoaVJ
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  annotations:
+    kubernetes.io/description: Contains a CA bundle that can be used to verify the
+      kube-apiserver when using internal endpoints such as the internal service IP
+      or kubernetes.default.svc. No other usage is guaranteed across distributions
+      of Kubernetes clusters.
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  name: kube-root-ca.crt
+  namespace: contrail-system

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Node
+metadata:
+  annotations:
+    jcnr.juniper.net/internal-params: '{"routerMac": "48:5A:0D:BA:25:CA"}'
+    kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/crio/crio.sock
+    node.alpha.kubernetes.io/ttl: "0"
+    projectcalico.org/IPv4Address: 192.168.2.2/24
+    projectcalico.org/IPv4IPIPTunnelAddr: 10.244.100.192
+    volumes.kubernetes.io/controller-managed-attach-detach: "true"
+  creationTimestamp: "2023-12-27T09:42:46Z"
+  labels:
+    beta.kubernetes.io/arch: amd64
+    beta.kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+    kubernetes.io/hostname: sharmag-k8s-master-pnad30.englab.juniper.net
+    kubernetes.io/os: linux
+    node: master
+    node-role.kubernetes.io/control-plane: ""
+    node-role.kubernetes.io/master: ""
+    node.kubernetes.io/exclude-from-external-load-balancers: ""
+  name: sharmag-k8s-master-pnad30.englab.juniper.net
+spec:
+  podCIDR: 10.244.0.0/24
+  podCIDRs:
+  - 10.244.0.0/24

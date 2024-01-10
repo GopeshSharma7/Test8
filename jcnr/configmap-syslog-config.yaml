@@ -1,0 +1,208 @@
+apiVersion: v1
+data:
+  syslog-ng.conf: |
+    #############################################################################
+    # Default syslog-ng.conf file which collects all local logs into a
+    # single file called /var/log/messages tailored to container usage.
+    @version: 3.29
+    @include "scl.conf"
+
+    source s_network {
+        network (
+            ip("127.0.0.1")
+            transport("udp")
+            port(50055)
+        );
+    };
+
+    parser p_jcnr_cni_syslog {
+            syslog-parser(template("${MESSAGE}"));
+            map-value-pairs(
+                     pair("jcnr.header.nodeName", "$HOST")
+                     pair("jcnr.header.eventDateTime", "$R_ISODATE")
+                     pair("jcnr.header.notificationType", "$MSGID")
+                     pair("jcnr.body", "$MSG")
+                    pair("jcnr.header.program", "$PROGRAM")
+            );
+            csv-parser(columns("K1", "jcnr.header.notificationType")
+                flags(escape-double-char,strip-whitespace)
+                delimiters(" ")
+                quote-pairs('""[]')
+                template("${MESSAGE}")
+            );
+    };
+
+    # For messages received directly from logger instead of via eventd
+    parser p_jcnr_cni2_syslog {
+            map-value-pairs(
+                     pair("jcnr.header.nodeName", "$HOST")
+                     pair("jcnr.header.eventDateTime", "$R_ISODATE")
+                     pair("jcnr.header.notificationType", "$MSGID")
+                     pair("jcnr.body", "$MSG")
+                    pair("jcnr.header.program", "$PROGRAM")
+            );
+            csv-parser(columns("K1", "jcnr.header.notificationType")
+                flags(escape-double-char,strip-whitespace)
+                delimiters(" ")
+                quote-pairs('""[]')
+                template("${MESSAGE}")
+            );
+    };
+
+    parser p_crpd_syslog {
+            map-value-pairs(pair("jcnr.header.logLevel", "$(uppercase $LEVEL)"));
+            syslog-parser(flags(syslog-protocol) template("${MESSAGE}"));
+            map-value-pairs(
+                    pair("jcnr.header.nodeName", "$HOST")
+                    pair("jcnr.header.eventDateTime", "$R_ISODATE")
+                    pair("jcnr.header.notificationType", "$MSGID")
+                    pair("jcnr.body", "$MSG")
+                    pair("jcnr.header.program", "$PROGRAM")
+                    pair("jcnr.header.sysUpTime", "$SYSUPTIME")
+            );
+            csv-parser(columns("K1", "jcnr.header.notificationType")
+                flags(escape-double-char,strip-whitespace)
+                delimiters(" ")
+                quote-pairs('""[]')
+                template("${MESSAGE}")
+            );
+    };
+
+    rewrite r_crpd {
+        set("$(/ $(+ ${SYSUPTIME}0 `HOSTUPTIME`000) 1000)" value("uptime"));
+        set("$(/ $uptime 86400)", value("days"));
+        set("$(% $uptime 86400)", value("remaining"));
+        set("$(/ $remaining 3600)", value("hours"));
+        set("$(% $remaining 3600)", value("remaining"));
+        set("$(/ $remaining 60)", value("minutes"));
+        set("$(% $remaining 60)", value("seconds"));
+        set("$days days, $hours hours, $minutes minutes, $seconds seconds" value("jcnr.header.sysUpTime"));
+    };
+
+    filter f_jcnr_cni_no_info { not level(info) };
+    filter f_crpd_not_kernel { not program("kernel") };
+    filter f_crpd_allowed { program("license-check") or program("jcnr-init") or program("mgd") };
+    filter f_jcnr_cni { match("1" value("PROGRAM")); };
+    filter f_jcnr_cni2 { program("jcnr-init") or program("jcnr-health") };
+
+    destination d_crpd_json {
+    file("/var/log/jcnr_notifications.json" persist-name("crpd_notification") template("$(format-json --key jcnr.*)\n"));
+    };
+
+    log {
+       source(s_network);
+       filter(f_crpd_not_kernel);
+       filter(f_jcnr_cni_no_info);
+       parser {
+         map-value-pairs(pair("jcnr.header.logLevel", "$(uppercase $LEVEL)"));
+         syslog-parser(template("${MESSAGE}"));
+       };
+       filter(f_jcnr_cni2);
+       parser(p_jcnr_cni2_syslog);
+       destination(d_crpd_json);
+    };
+
+    log {
+       source(s_network);
+       parser(p_crpd_syslog);
+       filter(f_crpd_allowed);
+       rewrite(r_crpd);
+       destination(d_crpd_json);
+    };
+
+    ###
+    source s_agent {
+        file("`CONTRAIL_VROUTER_LOG_PATH`/contrail-vrouter-agent.log" follow-freq(1)
+                flags(no-parse));
+    };
+
+    parser p_agent {
+        csv-parser(columns("jcnr.header.eventDate", "jcnr.header.eventDay", "jcnr.header.eventTime",
+                    "jcnr.header.eventTimeStd", "jcnr.header.nodeName", "jcnr.header.threadDetail",
+                    "jcnr.header.logLevel", "jcnr.header.eventDateTime", "jcnr.header.event", "jcnr.header.notificationType", "jcnr.body")
+                flags(escape-double-char,strip-whitespace)
+                delimiters(" ")
+                quote-pairs('""[]')
+                );
+                map-value-pairs(pair("jcnr.header.program", "vrouter-agent"));
+    };
+
+    filter f_agent { match("AgentNotification" value("MESSAGE")); };
+
+    destination d_agent {
+        file("/var/log/jcnr_notifications.json" persist-name("agent_notification") template("$(format-json --key jcnr.header.eventDateTime jcnr.header.nodeName jcnr.header.logLevel jcnr.header.notificationType jcnr.header.program jcnr.body jcnr.header.sysUpTime --scope dot-nv-pairs)\n"));
+    };
+
+    rewrite r_agent {
+        set("$ISODATE" value("jcnr.header.eventDateTime"));
+        set("$(/ $(+ ${SYSUPTIME}0 `HOSTUPTIME`000) 1000)" value("uptime"));
+        set("$(/ $uptime 86400)", value("days"));
+        set("$(% $uptime 86400)", value("remaining"));
+        set("$(/ $remaining 3600)", value("hours"));
+        set("$(% $remaining 3600)", value("remaining"));
+        set("$(/ $remaining 60)", value("minutes"));
+        set("$(% $remaining 60)", value("seconds"));
+        set("$days days, $hours hours, $minutes minutes, $seconds seconds" value("jcnr.header.sysUpTime"));
+    };
+
+    log {
+        source(s_agent); parser(p_agent); filter(f_agent); rewrite(r_agent); destination(d_agent);
+    };
+
+    ###
+
+    source s_vrouter_kernel_init {
+        file("`CONTRAIL_VROUTER_LOG_PATH`/vrouter-kernel-init.log" follow-freq(1)
+                flags(no-parse));
+    };
+
+    source s_vrouter_dpdk_init {
+        file("`CONTRAIL_VROUTER_LOG_PATH`/contrail-vrouter-dpdk-init.log" follow-freq(1)
+                flags(no-parse));
+    };
+
+    parser p_vrouter_init_hdr {
+        kv-parser(prefix("jcnr.header.") value-separator("="));
+    };
+
+    filter f_vrouter_init { match("level=error" value("MESSAGE")); };
+
+    destination d_vrouter_init {
+        file("/var/log/jcnr_notifications.json" persist-name("vrouter_init_notification")
+                template("$(format-json jcnr.header.eventDateTime jcnr.header.nodeName jcnr.header.logLevel jcnr.header.notificationType jcnr.header.program jcnr.body jcnr.header.sysUpTime --scope dot-nv-pairs)\n"));
+    };
+
+    rewrite f_rewrite {
+        set("initFailed" value("jcnr.header.notificationType"));
+        set("ERROR" value("jcnr.header.logLevel"));
+        set("vrouter_init" value("jcnr.header.program"));
+        set("$ISODATE" value("jcnr.header.eventDateTime"));
+        set("$HOST" value("jcnr.header.nodeName"));
+        set("$MSG" value("jcnr.body"));
+        set("$(/ $(+ ${SYSUPTIME}0 `HOSTUPTIME`000) 1000)" value("uptime"));
+        set("$(/ $uptime 86400)", value("days"));
+        set("$(% $uptime 86400)", value("remaining"));
+        set("$(/ $remaining 3600)", value("hours"));
+        set("$(% $remaining 3600)", value("remaining"));
+        set("$(/ $remaining 60)", value("minutes"));
+        set("$(% $remaining 60)", value("seconds"));
+        set("$days days, $hours hours, $minutes minutes, $seconds seconds" value("jcnr.header.sysUpTime"));
+    };
+
+    log {
+        source(s_vrouter_kernel_init); filter(f_vrouter_init); rewrite(f_rewrite); parser(p_vrouter_init_hdr);  destination(d_vrouter_init);
+    };
+
+    log {
+        source(s_vrouter_dpdk_init); filter(f_vrouter_init); rewrite(f_rewrite); parser(p_vrouter_init_hdr);  destination(d_vrouter_init);
+    };
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: jcnr
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: syslog-config
+  namespace: jcnr

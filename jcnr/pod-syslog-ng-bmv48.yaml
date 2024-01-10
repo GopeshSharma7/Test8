@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2023-12-27T09:47:46Z"
+  generateName: syslog-ng-
+  labels:
+    app.kubernetes.io/name: syslog-ng
+    controller-revision-hash: 549d4b96c
+    pod-template-generation: "1"
+  name: syslog-ng-bmv48
+  namespace: jcnr
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DaemonSet
+    name: syslog-ng
+    uid: 5d514036-0e2a-424f-a305-e86317f96bb0
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchFields:
+          - key: metadata.name
+            operator: In
+            values:
+            - sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  containers:
+  - command:
+    - sh
+    - -c
+    - HOSTUPTIME=$(cut -d'.' -f1 /proc/uptime) /usr/sbin/syslog-ng -F -f /config/syslog-ng.conf
+      --persist-file /config/syslog-ng.persist --pidfile=/config/syslog-ng.pid --control=/config/syslog-ng.ctl
+      --stderr --no-caps
+    env:
+    - name: CONTRAIL_VROUTER_LOG_PATH
+      value: /var/log/jcnr/
+    image: svl-artifactory.juniper.net/contrail-docker/x86_64/syslog-ng:v6
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      exec:
+        command:
+        - syslog-ng-ctl
+        - stats
+        - --control=config/syslog-ng.ctl
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+    name: syslog-ng
+    ports:
+    - containerPort: 6601
+      hostPort: 6601
+      name: syslog-tcp
+      protocol: TCP
+    - containerPort: 5514
+      hostPort: 5514
+      name: syslog-udp
+      protocol: UDP
+    resources: {}
+    securityContext:
+      privileged: true
+      runAsUser: 0
+    startupProbe:
+      exec:
+        command:
+        - syslog-ng-ctl
+        - stats
+        - --control=config/syslog-ng.ctl
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /config/syslog-ng.conf
+      name: config
+      subPath: syslog-ng.conf
+    - mountPath: /var/log/jcnr/
+      name: contraillogs
+    - mountPath: /var/log/jcnr_notifications.json
+      name: jcnrnotifications
+    - mountPath: /etc/localtime
+      name: host-time
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-xgxht
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  nodeName: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 3000
+    runAsUser: 1000
+  serviceAccount: crpd
+  serviceAccountName: crpd
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/disk-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/memory-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/pid-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/unschedulable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/network-unavailable
+    operator: Exists
+  volumes:
+  - configMap:
+      defaultMode: 420
+      name: syslog-config
+    name: config
+  - hostPath:
+      path: /var/log/jcnr/
+      type: ""
+    name: contraillogs
+  - hostPath:
+      path: /var/log/jcnr/jcnr_notifications.json
+      type: FileOrCreate
+    name: jcnrnotifications
+  - hostPath:
+      path: /etc/localtime
+      type: ""
+    name: host-time
+  - name: kube-api-access-xgxht
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace

@@ -1,0 +1,26 @@
+apiVersion: v1
+count: 16008
+eventTime: null
+firstTimestamp: "2023-12-27T09:46:15Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: calico-node-qmbjk
+  namespace: kube-system
+  resourceVersion: "852"
+  uid: d613fc64-7eb7-4d5e-a6dd-a0530773b6f1
+kind: Event
+lastTimestamp: "2024-01-10T09:26:34Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:46:15Z"
+  name: calico-node-qmbjk.17a4a72e06577a97
+  namespace: kube-system
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-master-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-master-pnad30.englab.juniper.net
+type: Warning

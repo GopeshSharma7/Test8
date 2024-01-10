@@ -1,0 +1,175 @@
+apiVersion: crd.projectcalico.org/v1
+kind: IPAMBlock
+metadata:
+  annotations:
+    projectcalico.org/metadata: '{"creationTimestamp":null}'
+  creationTimestamp: "2023-12-27T09:46:29Z"
+  name: 10-244-100-192-26
+spec:
+  affinity: host:sharmag-k8s-master-pnad30.englab.juniper.net
+  allocations:
+  - 0
+  - 1
+  - 2
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - 3
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+  attributes:
+  - handle_id: ipip-tunnel-addr-sharmag-k8s-master-pnad30.englab.juniper.net
+    secondary:
+      node: sharmag-k8s-master-pnad30.englab.juniper.net
+      type: ipipTunnelAddress
+  - handle_id: k8s-pod-network.ba4536aa1e07b8a6bf32ba0fb37cf4654d956042e12663fe5598866ff3b77411
+    secondary:
+      namespace: kube-system
+      node: sharmag-k8s-master-pnad30.englab.juniper.net
+      pod: coredns-56bc94896d-26v92
+      timestamp: 2023-12-27 09:46:30.474123386 +0000 UTC
+  - handle_id: k8s-pod-network.e67629863d960cb1188e241058e98bd023cb60d526a94008f796d3b2dbe56e61
+    secondary:
+      namespace: kube-system
+      node: sharmag-k8s-master-pnad30.englab.juniper.net
+      pod: coredns-56bc94896d-7txm9
+      timestamp: 2023-12-27 09:46:33.426823233 +0000 UTC
+  - handle_id: k8s-pod-network.d2882cba3568888772bed3442086fbdda177630d9b40343e62d4f64587e6214a
+    secondary:
+      namespace: default
+      node: sharmag-k8s-master-pnad30.englab.juniper.net
+      pod: katafygio-767758478c-89n9d
+      timestamp: 2024-01-10 07:14:15.196728248 +0000 UTC
+  cidr: 10.244.100.192/26
+  deleted: false
+  sequenceNumber: 1703670389193232358
+  sequenceNumberForAllocation:
+    "0": 1703670389193232338
+    "1": 1703670389193232339
+    "2": 1703670389193232340
+    "3": 1703670389193232341
+    "4": 1703670389193232343
+    "5": 1703670389193232345
+    "6": 1703670389193232347
+    "7": 1703670389193232349
+    "8": 1703670389193232351
+    "9": 1703670389193232353
+    "10": 1703670389193232355
+    "11": 1703670389193232357
+  strictAffinity: false
+  unallocated:
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10

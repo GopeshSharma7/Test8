@@ -1,0 +1,26 @@
+apiVersion: v1
+count: 16030
+eventTime: null
+firstTimestamp: "2023-12-27T09:47:48Z"
+involvedObject:
+  apiVersion: v1
+  kind: Pod
+  name: kube-crpd-worker-sts-0
+  namespace: jcnr
+  resourceVersion: "1314"
+  uid: c23f0f12-0cda-45e7-8c9d-8b877547e7dc
+kind: Event
+lastTimestamp: "2024-01-10T09:23:37Z"
+message: 'Nameserver limits were exceeded, some nameservers have been omitted, the
+  applied nameserver line is: 10.84.5.101 172.21.200.60 66.129.233.81'
+metadata:
+  creationTimestamp: "2023-12-27T09:47:48Z"
+  name: kube-crpd-worker-sts-0.17a4a743ba90ba60
+  namespace: jcnr
+reason: DNSConfigForming
+reportingComponent: kubelet
+reportingInstance: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+source:
+  component: kubelet
+  host: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+type: Warning

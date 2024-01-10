@@ -1,0 +1,24 @@
+apiVersion: v1
+count: 23664
+eventTime: null
+firstTimestamp: "2024-01-06T06:46:33Z"
+involvedObject:
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  name: conf-kube-crpd-worker-sts-1
+  namespace: jcnr
+  resourceVersion: "1277"
+  uid: e12a497e-6de7-4d8a-b404-657abe18c8c6
+kind: Event
+lastTimestamp: "2024-01-10T09:21:47Z"
+message: waiting for pod kube-crpd-worker-sts-1 to be scheduled
+metadata:
+  creationTimestamp: "2024-01-06T06:46:33Z"
+  name: conf-kube-crpd-worker-sts-1.17a7af2d58fee56b
+  namespace: jcnr
+reason: WaitForPodScheduled
+reportingComponent: persistentvolume-controller
+reportingInstance: ""
+source:
+  component: persistentvolume-controller
+type: Normal
